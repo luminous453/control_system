@@ -69,3 +69,109 @@
 ### UseCase диаграмма
 ![usecase](./images/usecase.png)
 
+---
+
+## Быстрый старт
+
+### Запуск полной системы с Docker
+
+```bash
+docker-compose up -d
+```
+
+Сервисы будут доступны по адресам:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **PostgreSQL**: localhost:5432
+
+### Запуск только Backend
+
+#### Windows:
+```bash
+start_backend.bat
+```
+
+#### Linux/Mac:
+```bash
+chmod +x start_backend.sh
+./start_backend.sh
+```
+
+### Тестовые пользователи
+
+После инициализации базы данных будут созданы следующие пользователи (пароль: `password123`):
+
+- **admin@example.com** - Администратор (Менеджер)
+- **manager@example.com** - Петров Иван Сергеевич (Менеджер)
+- **engineer1@example.com** - Смирнов Алексей Викторович (Инженер)
+- **engineer2@example.com** - Козлова Мария Андреевна (Инженер)
+- **supervisor@example.com** - Директор Строительства (Руководитель)
+
+## Структура проекта
+
+```
+control_system/
+├── backend/                 # FastAPI backend
+│   ├── app/
+│   │   ├── models/         # SQLAlchemy модели
+│   │   ├── schemas/        # Pydantic схемы
+│   │   ├── routers/        # API роутеры
+│   │   ├── utils/          # Утилиты
+│   │   ├── config.py       # Конфигурация
+│   │   └── database.py     # Подключение к БД
+│   ├── alembic/            # Миграции базы данных
+│   ├── uploads/            # Загруженные файлы
+│   ├── requirements.txt    # Python зависимости
+│   ├── Dockerfile          # Docker конфигурация
+│   └── seed_db.py          # Заполнение БД тестовыми данными
+├── frontend/               # Next.js frontend
+├── nginx/                  # Nginx конфигурация
+├── docker-compose.yml      # Docker Compose конфигурация
+└── images/                 # Диаграммы и изображения
+```
+
+## API Endpoints
+
+### Аутентификация
+- `POST /api/auth/login` - Вход в систему
+- `POST /api/auth/register` - Регистрация
+
+### Пользователи и роли
+- `GET /api/users/` - Список пользователей
+- `GET /api/users/me` - Текущий пользователь
+- `GET /api/users/roles` - Список ролей
+
+### Проекты
+- `GET /api/projects/` - Список проектов
+- `POST /api/projects/` - Создание проекта
+- `GET /api/projects/{id}` - Проект по ID
+
+### Дефекты
+- `GET /api/defects/` - Список дефектов (с фильтрацией)
+- `POST /api/defects/` - Создание дефекта
+- `GET /api/defects/{id}` - Дефект по ID
+- `POST /api/defects/{id}/comments` - Добавление комментария
+- `POST /api/defects/{id}/attachments` - Загрузка файла
+
+### Отчеты и аналитика
+- `GET /api/reports/analytics` - Аналитические данные
+- `GET /api/reports/export/csv` - Экспорт в CSV
+
+## Безопасность
+
+- Пароли хешируются с использованием **bcrypt**
+- **JWT токены** для аутентификации 
+- **Разграничение доступа** по ролям
+- **Валидация входных данных** с Pydantic
+- **Защита от SQL-инъекций** с SQLAlchemy ORM
+- **CORS настройки** для безопасных запросов
+
+## Статусы дефектов
+
+1. **Новая** - дефект зарегистрирован
+2. **В работе** - назначен исполнитель
+3. **На проверке** - работа выполнена, ожидает проверки
+4. **Закрыта** - дефект устранен
+5. **Отменена** - дефект отменен
+
