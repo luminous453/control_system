@@ -7,7 +7,6 @@ import os
 from app.database import create_tables
 from app.routers import auth, users, projects, defects, reports
 
-# Загружаем переменные окружения
 load_dotenv()
 
 app = FastAPI(
@@ -18,7 +17,6 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Настройка CORS для фронтенда
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://localhost:8000"],
@@ -27,13 +25,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Trusted Host middleware
 app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["localhost", "127.0.0.1", "0.0.0.0"]
 )
 
-# Подключаем роутеры
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(projects.router, prefix="/api/projects", tags=["Projects"])
@@ -42,7 +38,6 @@ app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 
 @app.on_event("startup")
 async def startup_event():
-    """Создание таблиц при запуске приложения"""
     create_tables()
 
 @app.get("/", tags=["Root"])

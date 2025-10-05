@@ -26,7 +26,6 @@ export default function RegisterPage() {
       alert('Пароли не совпадают');
       return;
     }
-    // TODO: Реализация логики регистрации
     console.log('Данные для регистрации:', formData);
     alert('Заглушка: Регистрация в разработке');
   };
@@ -150,7 +149,8 @@ export default function RegisterPage() {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#07575B'}}
               >
                 Зарегистрироваться
               </button>
@@ -168,14 +168,14 @@ export default function RegisterPage() {
             </div>
 
             <div className="mt-6 text-center">
-              <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/auth/login" className="font-medium hover:opacity-80" style={{color: '#07575B'}}>
                 Уже есть аккаунт? Войти
               </Link>
             </div>
           </div>
 
           <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-gray-600 hover:text-gray-500">
+            <Link href="/" className="text-sm hover:opacity-80" style={{color: '#07575B'}}>
               ← Вернуться на главную
             </Link>
           </div>

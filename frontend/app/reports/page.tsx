@@ -84,12 +84,10 @@ export default function ReportsPage() {
   ];
 
   const handleGenerateReport = () => {
-    // TODO: Реализация генерации отчета
     alert('Заглушка: Отчет сгенерирован!');
   };
 
   const handleExportReport = (format: string) => {
-    // TODO: Реализация экспорта отчета
     alert(`Заглушка: Экспорт отчета в формате ${format}`);
   };
 
@@ -234,19 +232,29 @@ export default function ReportsPage() {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#C4DFE6'}}>
       {/* Заголовок */}
-      <div className="bg-white shadow">
+      <div className="shadow" style={{backgroundColor: '#66A5AD'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Отчетность</h1>
-              <p className="text-gray-600">Генерация и просмотр отчетов по дефектам</p>
+              <h1 className="text-3xl font-bold" style={{color: '#003B46'}}>Отчетность</h1>
+              <p style={{color: '#07575B'}}>Генерация и просмотр отчетов по дефектам</p>
             </div>
-            <Link 
-              href="/dashboard"
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
-            >
-              Дашборд
-            </Link>
+            <div className="flex space-x-4">
+              <Link 
+                href="/analytics"
+                className="text-white px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#07575B'}}
+              >
+                Аналитика
+              </Link>
+              <Link 
+                href="/dashboard"
+                className="px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#C4DFE6', color: '#003B46'}}
+              >
+                Дашборд
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -333,7 +341,8 @@ export default function ReportsPage() {
 
                 <button
                   onClick={handleGenerateReport}
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                  className="w-full text-white px-4 py-2 rounded-md hover:opacity-80 transition-opacity text-sm"
+                  style={{backgroundColor: '#07575B'}}
                 >
                   Обновить отчет
                 </button>
@@ -352,19 +361,22 @@ export default function ReportsPage() {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleExportReport('PDF')}
-                      className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors"
+                      className="text-white px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                      style={{backgroundColor: '#07575B'}}
                     >
                       PDF
                     </button>
                     <button
                       onClick={() => handleExportReport('Excel')}
-                      className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+                      className="text-white px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                      style={{backgroundColor: '#66A5AD'}}
                     >
                       Excel
                     </button>
                     <button
                       onClick={() => handleExportReport('CSV')}
-                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                      className="text-white px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                      style={{backgroundColor: '#003B46'}}
                     >
                       CSV
                     </button>

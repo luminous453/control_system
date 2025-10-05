@@ -1,13 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  // Заглушка для определения роли пользователя - ИЗМЕНИТЕ ЗДЕСЬ ДЛЯ ТЕСТИРОВАНИЯ:
-  // 'engineer' - для инженера, 'manager' - для менеджера, 'observer' - для руководителя
-  const [userRole] = useState<'engineer' | 'manager' | 'observer'>('manager');
+  const [userRole] = useState<'engineer' | 'manager' | 'supervisor'>('manager');
   const [userName] = useState('Иван Петров');
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      switch (userRole) {
+        case 'engineer':
+          window.location.href = '/dashboard/engineer';
+          break;
+        case 'manager':
+          window.location.href = '/dashboard/manager';
+          break;
+        case 'supervisor':
+          window.location.href = '/dashboard/supervisor';
+          break;
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [userRole]);
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {

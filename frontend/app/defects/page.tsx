@@ -71,22 +71,22 @@ export default function DefectsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Новая': return 'bg-yellow-100 text-yellow-800';
-      case 'В работе': return 'bg-blue-100 text-blue-800';
-      case 'На проверке': return 'bg-purple-100 text-purple-800';
-      case 'Закрыта': return 'bg-green-100 text-green-800';
-      case 'Отменена': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Новая': return { bg: '#66A5AD', text: 'white' };
+      case 'В работе': return { bg: '#07575B', text: 'white' };
+      case 'На проверке': return { bg: '#003B46', text: 'white' };
+      case 'Закрыта': return { bg: '#C4DFE6', text: '#003B46' };
+      case 'Отменена': return { bg: '#FF4444', text: 'white' };
+      default: return { bg: '#C4DFE6', text: '#07575B' };
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'Критический': return 'bg-red-100 text-red-800';
-      case 'Высокий': return 'bg-orange-100 text-orange-800';
-      case 'Средний': return 'bg-yellow-100 text-yellow-800';
-      case 'Низкий': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Критический': return { bg: '#FF4444', text: 'white' };
+      case 'Высокий': return { bg: '#FF8800', text: 'white' };
+      case 'Средний': return { bg: '#66A5AD', text: 'white' };
+      case 'Низкий': return { bg: '#C4DFE6', text: '#003B46' };
+      default: return { bg: '#C4DFE6', text: '#07575B' };
     }
   };
 
@@ -109,23 +109,25 @@ export default function DefectsPage() {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#C4DFE6'}}>
       {/* Заголовок */}
-      <div className="bg-white shadow">
+      <div className="shadow" style={{backgroundColor: '#66A5AD'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Управление дефектами</h1>
-              <p className="text-gray-600">Регистрация, отслеживание и контроль дефектов</p>
+              <h1 className="text-3xl font-bold" style={{color: '#003B46'}}>Управление дефектами</h1>
+              <p style={{color: '#07575B'}}>Регистрация, отслеживание и контроль дефектов</p>
             </div>
             <div className="flex space-x-4">
               <Link 
                 href="/defects/create"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="text-white px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#07575B'}}
               >
                 Добавить дефект
               </Link>
               <Link 
                 href="/dashboard"
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#C4DFE6', color: '#003B46'}}
               >
                 Дашборд
               </Link>
@@ -277,10 +279,22 @@ export default function DefectsPage() {
                           Просрочено
                         </span>
                       )}
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full mr-2 ${getStatusColor(defect.status)}`}>
+                      <span 
+                        className="px-2 py-1 text-xs font-medium rounded-full mr-2"
+                        style={{
+                          backgroundColor: getStatusColor(defect.status).bg,
+                          color: getStatusColor(defect.status).text
+                        }}
+                      >
                         {defect.status}
                       </span>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(defect.priority)}`}>
+                      <span 
+                        className="px-2 py-1 text-xs font-medium rounded-full"
+                        style={{
+                          backgroundColor: getPriorityColor(defect.priority).bg,
+                          color: getPriorityColor(defect.priority).text
+                        }}
+                      >
                         {defect.priority}
                       </span>
                     </div>
@@ -290,13 +304,15 @@ export default function DefectsPage() {
                   <div className="ml-6 flex space-x-2">
                     <Link
                       href={`/defects/${defect.id}`}
-                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                      className="text-white px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                      style={{backgroundColor: '#07575B'}}
                     >
                       Подробнее
                     </Link>
                     <Link
                       href={`/defects/${defect.id}/edit`}
-                      className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300 transition-colors"
+                      className="px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                      style={{backgroundColor: '#C4DFE6', color: '#003B46'}}
                     >
                       Изменить
                     </Link>

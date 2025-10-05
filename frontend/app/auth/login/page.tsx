@@ -18,7 +18,6 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Реализация логики авторизации
     console.log('Данные для авторизации:', formData);
     alert('Заглушка: Авторизация в разработке');
   };

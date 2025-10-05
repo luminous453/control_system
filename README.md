@@ -73,32 +73,47 @@
 
 ## Быстрый старт
 
-### Запуск полной системы с Docker
+### Требования
+
+1. **PostgreSQL** - установите и создайте базу данных:
+   ```sql
+   CREATE DATABASE control_system;
+   CREATE USER postgres WITH PASSWORD 'password';
+   GRANT ALL PRIVILEGES ON DATABASE control_system TO postgres;
+   ```
+
+2. **Python 3.8+** и **Node.js 18+**
+
+### Запуск Backend
+
+#### Автоматический запуск:
+**Windows**: `start_backend.bat`  
+**Linux/Mac**: `./start_backend.sh`
+
+#### Ручной запуск:
+```bash
+cd backend
+pip install -r requirements.txt
+python seed_db.py
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Запуск Frontend
 
 ```bash
-docker-compose up -d
+cd frontend
+npm install
+npm run dev
 ```
 
 Сервисы будут доступны по адресам:
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
-- **PostgreSQL**: localhost:5432
 
-### Запуск только Backend
+### База данных
 
-#### Windows:
-```bash
-start_backend.bat
-```
-
-#### Linux/Mac:
-```bash
-chmod +x start_backend.sh
-./start_backend.sh
-```
-
-### Тестовые пользователи
+Используется PostgreSQL. База данных `control_system` должна быть создана заранее.
 
 После инициализации базы данных будут созданы следующие пользователи (пароль: `password123`):
 

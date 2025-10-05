@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-"""
-Скрипт для заполнения базы данных тестовыми данными
-"""
 
 import sys
 import os
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
-# Добавляем текущую директорию в путь
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from app.database import SessionLocal, create_tables
@@ -18,23 +14,15 @@ from app.models.defects import Defect, DefectStatus, DefectComment
 from app.utils.auth import get_password_hash
 
 def seed_database():
-    """Заполняет базу данных тестовыми данными"""
-    
-    # Создаем таблицы
     create_tables()
-    
-    # Создаем сессию
     db = SessionLocal()
     
     try:
-        # Проверяем, есть ли уже данные
         if db.query(Role).count() > 0:
             print("База данных уже содержит данные. Пропускаем инициализацию.")
             return
         
         print("Заполнение базы данных тестовыми данными...")
-        
-        # 1. Создаем роли
         roles_data = [
             {"name": "Инженер"},
             {"name": "Менеджер"},
@@ -45,11 +33,10 @@ def seed_database():
         for role_data in roles_data:
             role = Role(**role_data)
             db.add(role)
-            db.flush()  # Получаем ID
+            db.flush()
             roles[role_data["name"]] = role
             print(f"Создана роль: {role.name}")
         
-        # 2. Создаем статусы дефектов
         statuses_data = [
             {"name": "Новая"},
             {"name": "В работе"},
@@ -66,7 +53,6 @@ def seed_database():
             statuses[status_data["name"]] = status
             print(f"Создан статус: {status.name}")
         
-        # 3. Создаем пользователей
         password_hash = get_password_hash("password123")
         
         users_data = [
@@ -110,7 +96,6 @@ def seed_database():
             users[user_data["email"]] = user
             print(f"Создан пользователь: {user.full_name} ({user.email})")
         
-        # 4. Создаем проекты
         projects_data = [
             {
                 "name": "ЖК \"Северный\"",
@@ -142,7 +127,6 @@ def seed_database():
             projects.append(project)
             print(f"Создан проект: {project.name}")
         
-        # 5. Создаем дефекты
         base_date = datetime.now() - timedelta(days=7)
         
         defects_data = [
@@ -244,7 +228,6 @@ def seed_database():
             defects.append(defect)
             print(f"Создан дефект: {defect.description[:50]}...")
         
-        # 6. Создаем комментарии
         comments_data = [
             {
                 "defect_id": defects[0].id,
@@ -289,7 +272,6 @@ def seed_database():
             db.add(comment)
             print(f"Создан комментарий к дефекту #{comment_data['defect_id']}")
         
-        # Сохраняем все изменения
         db.commit()
         print("\nБаза данных успешно заполнена тестовыми данными!")
         print("\nТестовые пользователи (пароль: password123):")

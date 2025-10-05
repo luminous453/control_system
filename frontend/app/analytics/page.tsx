@@ -89,23 +89,25 @@ export default function AnalyticsPage() {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#C4DFE6'}}>
       {/* Заголовок */}
-      <div className="bg-white shadow">
+      <div className="shadow" style={{backgroundColor: '#66A5AD'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Аналитика</h1>
-              <p className="text-gray-600">Глубокий анализ данных по дефектам и производительности</p>
+              <h1 className="text-3xl font-bold" style={{color: '#003B46'}}>Аналитика</h1>
+              <p style={{color: '#07575B'}}>Глубокий анализ данных по дефектам и производительности</p>
             </div>
             <div className="flex space-x-4">
               <Link 
                 href="/reports"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="text-white px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#07575B'}}
               >
                 Отчеты
               </Link>
               <Link 
                 href="/dashboard"
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#C4DFE6', color: '#003B46'}}
               >
                 Дашборд
               </Link>
@@ -154,7 +156,8 @@ export default function AnalyticsPage() {
             <div className="flex items-end">
               <button
                 onClick={() => alert('Заглушка: Обновление аналитики')}
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                className="w-full text-white px-4 py-2 rounded-md hover:opacity-80 transition-opacity"
+                style={{backgroundColor: '#07575B'}}
               >
                 Обновить данные
               </button>
