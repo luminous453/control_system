@@ -1,76 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useProjects, useDefects } from '../../lib/hooks';
+import { ProjectFilters } from '../../lib/types';
+import AuthGuard from '../../components/AuthGuard';
 
 export default function ProjectsPage() {
-  // Заглушки данных для проектов
-  const [projects] = useState([
-    {
-      id: 1,
-      name: 'ЖК Солнечный',
-      description: 'Жилой комплекс в центральном районе',
-      status: 'В процессе',
-      defectsCount: 15,
-      executor: 'Строй-Инвест ООО',
-      startDate: '2024-01-15',
-      endDate: '2024-12-20'
-    },
-    {
-      id: 2,
-      name: 'Офис Центр',
-      description: 'Административное здание в деловом квартале',
-      status: 'Завершен',
-      defectsCount: 3,
-      executor: 'МегаСтрой АО',
-      startDate: '2023-06-01',
-      endDate: '2024-02-28'
-    },
-    {
-      id: 3,
-      name: 'Торговый центр Гранд',
-      description: 'Крупный торговый комплекс',
-      status: 'Планирование',
-      defectsCount: 0,
-      executor: 'СтройГрупп ООО',
-      startDate: '2024-03-01',
-      endDate: '2025-08-30'
-    },
-    {
-      id: 4,
-      name: 'Школа №25',
-      description: 'Реконструкция образовательного учреждения',
-      status: 'В процессе',
-      defectsCount: 8,
-      executor: 'СпецСтрой ООО',
-      startDate: '2024-02-01',
-      endDate: '2024-08-31'
-    }
-  ]);
+  const [filters, setFilters] = useState<ProjectFilters>({});
+  const { data: projects, loading: projectsLoading, error: projectsError, refetch } = useProjects(filters);
+  const { data: allDefects } = useDefects(); // Получаем все дефекты для подсчёта статистики
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('Все');
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Планирование': return 'bg-gray-100 text-gray-800';
-      case 'В процессе': return 'bg-blue-100 text-blue-800';
-      case 'Завершен': return 'bg-green-100 text-green-800';
-      case 'Приостановлен': return 'bg-yellow-100 text-yellow-800';
-      case 'Отменен': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  // Обновляем фильтры при изменении
+  useEffect(() => {
+    const newFilters: ProjectFilters = {};
+    if (searchTerm) newFilters.search = searchTerm;
+    setFilters(newFilters);
+  }, [searchTerm]);
+
+  // Подсчёт дефектов по проектам
+  const getDefectsCountByProject = (projectId: number) => {
+    if (!allDefects) return 0;
+    return allDefects.filter(defect => defect.project_id === projectId).length;
   };
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'Все' || project.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  // Статистика проектов
+  const getProjectStats = () => {
+    if (!projects || !allDefects) return { total: 0, active: 0, totalDefects: 0 };
+    
+    return {
+      total: projects.length,
+      active: projects.length, // Все проекты считаем активными
+      totalDefects: allDefects.length
+    };
+  };
+  
+  const stats = getProjectStats();
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#C4DFE6'}}>
+    <AuthGuard>
+      <div className="min-h-screen" style={{backgroundColor: '#C4DFE6'}}>
       {/* Заголовок */}
       <div className="shadow" style={{backgroundColor: '#66A5AD'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,7 +74,7 @@ export default function ProjectsPage() {
         {/* Фильтры и поиск */}
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
                   Поиск по названию или описанию
@@ -118,30 +89,10 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-                  Статус проекта
-                </label>
-                <select
-                  id="status"
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="Все">Все статусы</option>
-                  <option value="Планирование">Планирование</option>
-                  <option value="В процессе">В процессе</option>
-                  <option value="Завершен">Завершен</option>
-                  <option value="Приостановлен">Приостановлен</option>
-                  <option value="Отменен">Отменен</option>
-                </select>
-              </div>
-
               <div className="flex items-end">
                 <button
                   onClick={() => {
                     setSearchTerm('');
-                    setFilterStatus('Все');
                   }}
                   className="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
                 >
@@ -153,107 +104,132 @@ export default function ProjectsPage() {
         </div>
 
         {/* Статистика */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-blue-600">{projects.length}</p>
-              <p className="text-sm text-gray-600">Всего проектов</p>
+        {projectsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg shadow text-center animate-pulse">
+                <div className="h-8 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
+                <p className="text-sm text-gray-600">Всего проектов</p>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-green-600">{stats.active}</p>
+                <p className="text-sm text-gray-600">Активные</p>
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-orange-600">{stats.totalDefects}</p>
+                <p className="text-sm text-gray-600">Всего дефектов</p>
+              </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-green-600">
-                {projects.filter(p => p.status === 'В процессе').length}
-              </p>
-              <p className="text-sm text-gray-600">В процессе</p>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-gray-600">
-                {projects.filter(p => p.status === 'Завершен').length}
-              </p>
-              <p className="text-sm text-gray-600">Завершено</p>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-orange-600">
-                {projects.reduce((sum, p) => sum + p.defectsCount, 0)}
-              </p>
-              <p className="text-sm text-gray-600">Всего дефектов</p>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Список проектов */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
-              Проекты ({filteredProjects.length})
+              Проекты {projects ? `(${projects.length})` : ''}
             </h2>
           </div>
-          <div className="divide-y divide-gray-200">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="p-6 hover:bg-gray-50">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <h3 className="text-lg font-medium text-gray-900 mr-3">
-                        {project.name}
-                      </h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(project.status)}`}>
-                        {project.status}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-3">{project.description}</p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
-                      <div>
-                        <span className="font-medium">Исполнитель:</span>
-                        <br />
-                        {project.executor}
-                      </div>
-                      <div>
-                        <span className="font-medium">Дефектов:</span>
-                        <br />
-                        <span className={project.defectsCount > 0 ? 'text-orange-600 font-semibold' : 'text-green-600'}>
-                          {project.defectsCount}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="font-medium">Начало:</span>
-                        <br />
-                        {new Date(project.startDate).toLocaleDateString('ru-RU')}
-                      </div>
-                      <div>
-                        <span className="font-medium">Окончание:</span>
-                        <br />
-                        {new Date(project.endDate).toLocaleDateString('ru-RU')}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="ml-6 flex space-x-2">
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-                    >
-                      Подробнее
-                    </Link>
-                    <Link
-                      href={`/projects/${project.id}/defects`}
-                      className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300 transition-colors"
-                    >
-                      Дефекты
-                    </Link>
+          
+          {projectsLoading ? (
+            <div className="divide-y divide-gray-200">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-6 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          {filteredProjects.length === 0 && (
+              ))}
+            </div>
+          ) : projectsError ? (
+            <div className="p-12 text-center">
+              <p className="text-red-600">Ошибка загрузки проектов: {projectsError}</p>
+              <button 
+                onClick={() => refetch()}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Попробовать снова
+              </button>
+            </div>
+          ) : projects && projects.length > 0 ? (
+            <div className="divide-y divide-gray-200">
+              {projects.map((project) => {
+                const defectsCount = getDefectsCountByProject(project.id);
+                return (
+                  <div key={project.id} className="p-6 hover:bg-gray-50">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <h3 className="text-lg font-medium text-gray-900 mr-3">
+                            {project.name}
+                          </h3>
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                            Активный
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mb-3">{project.description || 'Описание отсутствует'}</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium">Ответственный:</span>
+                            <br />
+                            {project.default_executor?.full_name || 'Не назначен'}
+                          </div>
+                          <div>
+                            <span className="font-medium">Дефектов:</span>
+                            <br />
+                            <span className={defectsCount > 0 ? 'text-orange-600 font-semibold' : 'text-green-600'}>
+                              {defectsCount}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="font-medium">Создано:</span>
+                            <br />
+                            {new Date(project.created_at).toLocaleDateString('ru-RU')}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="ml-6 flex space-x-2">
+                        <Link
+                          href={`/projects/${project.id}`}
+                          className="text-white px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                          style={{backgroundColor: '#07575B'}}
+                        >
+                          Подробнее
+                        </Link>
+                        <Link
+                          href={`/defects?project_id=${project.id}`}
+                          className="px-3 py-1 rounded text-sm hover:opacity-80 transition-opacity"
+                          style={{backgroundColor: '#C4DFE6', color: '#003B46'}}
+                        >
+                          Дефекты
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
             <div className="p-12 text-center">
               <p className="text-gray-500">Проекты не найдены</p>
               <p className="text-sm text-gray-400 mt-1">
@@ -263,6 +239,7 @@ export default function ProjectsPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

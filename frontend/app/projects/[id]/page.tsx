@@ -133,11 +133,11 @@ export default function ProjectDetailPage() {
 
   const getTimelineIcon = (type: string) => {
     switch (type) {
-      case 'project_created': return '🏗️';
-      case 'defect_created': return '⚠️';
-      case 'status_changed': return '🔄';
-      case 'milestone': return '✅';
-      default: return '📌';
+      case 'project_created': return '•';
+      case 'defect_created': return '!';
+      case 'status_changed': return '↻';
+      case 'milestone': return '+';
+      default: return '•';
     }
   };
 

@@ -3,7 +3,7 @@ from typing import Optional
 import os
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/control_system"
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/control_system?client_encoding=utf8"
     DATABASE_HOST: str = "localhost"
     DATABASE_PORT: int = 5432
     DATABASE_NAME: str = "control_system"
